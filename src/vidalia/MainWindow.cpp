@@ -111,31 +111,6 @@ MainWindow::MainWindow()
   Vidalia::createShortcut("Ctrl+W", this, ui.btnHide, SLOT(click()));
   Vidalia::createShortcut("Esc", this, ui.btnHide, SLOT(click()));
 
-  /* Create all the dialogs of which we only want one instance */
-  _messageLog     = new MessageLog();
-  _bandwidthGraph = new BandwidthGraph();
-  _netViewer      = new NetViewer();
-  _configDialog   = new ConfigDialog();
-  _menuBar        = 0;
-  connect(_messageLog, SIGNAL(helpRequested(QString)),
-          this, SLOT(showHelpDialog(QString)));
-  connect(_netViewer, SIGNAL(helpRequested(QString)),
-          this, SLOT(showHelpDialog(QString)));
-  connect(_configDialog, SIGNAL(helpRequested(QString)),
-          this, SLOT(showHelpDialog(QString)));
-  connect(_configDialog, SIGNAL(restartTor()),
-          this, SLOT(restart()));
-
-  /* Create the actions that will go in the tray menu */
-  createActions();
-  /* Creates a tray icon with a context menu and adds it to the system's
-   * notification area. */
-  createTrayIcon();
-  /* Start with Tor initially stopped */
-  _status = Unset;
-  _isVidaliaRunningTor = false;
-  updateTorStatus(Stopped);
-
   /* Create a new TorControl object, used to communicate with Tor */
   _torControl = Vidalia::torControl();
   connect(_torControl, SIGNAL(started()), this, SLOT(started()));
@@ -166,6 +141,31 @@ MainWindow::MainWindow()
           this, SLOT(warnDangerousPort(quint16, bool)));
   connect(_torControl, SIGNAL(logMessage(tc::Severity, QString)),
           this, SLOT(log(tc::Severity, QString)));
+
+  /* Create all the dialogs of which we only want one instance */
+  _messageLog     = new MessageLog();
+  _bandwidthGraph = new BandwidthGraph();
+  _netViewer      = new NetViewer();
+  _configDialog   = new ConfigDialog();
+  _menuBar        = 0;
+  connect(_messageLog, SIGNAL(helpRequested(QString)),
+          this, SLOT(showHelpDialog(QString)));
+  connect(_netViewer, SIGNAL(helpRequested(QString)),
+          this, SLOT(showHelpDialog(QString)));
+  connect(_configDialog, SIGNAL(helpRequested(QString)),
+          this, SLOT(showHelpDialog(QString)));
+  connect(_configDialog, SIGNAL(restartTor()),
+          this, SLOT(restart()));
+
+  /* Create the actions that will go in the tray menu */
+  createActions();
+  /* Creates a tray icon with a context menu and adds it to the system's
+   * notification area. */
+  createTrayIcon();
+  /* Start with Tor initially stopped */
+  _status = Unset;
+  _isVidaliaRunningTor = false;
+  updateTorStatus(Stopped);
 
   /* Create a new HelperProcess object, used to start the web browser */
   _browserProcess = new HelperProcess(this);
